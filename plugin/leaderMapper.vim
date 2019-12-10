@@ -1,6 +1,6 @@
 "---------------------------------------------------------------
 " Plugin:      https://github.com/damofthemoon/vim-leader-mapper
-" Description: A plugin to create a leader key men u
+" Description: A plugin to create a leader key menu
 " Maintainer:  Damien Pretet https://github.com/damofthemoon
 "---------------------------------------------------------------
 
@@ -14,9 +14,8 @@ let s:save_cpo = &cpo
 " Reset compatible mode to default value
 set cpo&vim
 
-
+" Declare startup command
 command! -nargs=0 StartLeaderMapper call leaderMapper#start()
-
 
 " Restore compatible mode
 let &cpo = s:save_cpo
