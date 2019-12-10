@@ -1,0 +1,22 @@
+*vim-leader-mapper.txt*      Leader key mapper & menu maker
+*leader-mapper*
+
+==============================================================================
+CONTENTS                                              *leader-mapper-contents*
+
+Overview                                    |leader-mapper-overview|
+
+Changelog                                   |leader-mapper-changelog|
+
+
+=================================================================================
+Overview                                                 *leader-mapper-overview*
+
+|vim-leader-mapper| is a plugin to create a leader key menu for your shortcuts.
+
+
+=================================================================================
+Changelog                                               *leader-mapper-changelog*
+
+
+2019    - Initial release
