@@ -54,32 +54,30 @@ endfunction
 " Open floating window where menu is displayed. Neovim only
 function! s:OpenNeovimWin()
 
-  let height = &lines - 3
-  let width = float2nr(&columns - (&columns * 2 / 10))
-  let col = float2nr((&columns - width) / 2)
+    let height = &lines - 3
+    let width = float2nr(&columns - (&columns * 2 / 10))
+    let col = float2nr((&columns - width) / 2)
 
-  "Set the position, size, etc. of the floating window.
-  let opts = {
-        \ 'relative': 'editor',
-        \ 'row': height * 0.3,
-        \ 'col': col + 30,
-        \ 'width': width * 2 / 3,
-        \ 'height': height / 2
-        \ }
+    " Set the position, size, ... of the floating window.
+    let opts = {
+                \ 'relative': 'editor',
+                \ 'row': height * 0.3,
+                \ 'col': col + 30,
+                \ 'width': width * 2 / 3,
+                \ 'height': height / 2
+                \ }
 
-  " Open floating windows to display our menu
-  let s:win = nvim_open_win(s:menuBuffer, v:true, opts)
+    " Open floating windows to display our menu
+    let s:win = nvim_open_win(s:menuBuffer, v:true, opts)
+    " Set floating window highlighting
+    call setwinvar(s:win, '&winhl', 'Normal:Pmenu')
 
-  "Set Floating Window Highlighting
-  call setwinvar(s:win, '&winhl', 'Normal:Pmenu')
-
-  setlocal
-        \ buftype=nofile
-        \ nobuflisted
-        \ bufhidden=hide
-        \ nonumber
-        \ norelativenumber
-        \ signcolumn=no
+    setlocal buftype=nofile
+    setlocal nobuflisted
+    setlocal bufhidden=hide
+    setlocal nonumber
+    setlocal norelativenumber
+    setlocal signcolumn=no
 
 endfunction
 
@@ -110,7 +108,7 @@ endfunction
 
 function s:CloseNeovimMenu()
 
-    " Close window
+    " Close window (force)
     call nvim_win_close(s:win, 1)
     " Free the window's handle
     unlet s:win
@@ -126,7 +124,7 @@ endfunction
 " Wait for user action to decide next steps
 function! s:WaitUserAction()
 
-    " redraw to force display of menu (hidden by default)
+    " redraw to force display of menu (hidden by default with getchar call)
     redraw
     " wait for a user character input. Return ASCII code
     let userAction = getchar()
@@ -149,15 +147,15 @@ function! s:FillMenu()
         unlet s:menuBuffer
     endif
 
+    " Convert the conf into a list of string and create/fill the buffer
     call s:CreateMenuString()
-
     let s:menuBuffer = nvim_create_buf(v:false, v:true)
     call nvim_buf_set_lines(s:menuBuffer, 0, 0, 0, s:menuList)
 
 endfunction
 
 
-" Parse g:leaderMenu and create a slit of string to display
+" Parse g:leaderMenu and create a list of string to display
 function! s:CreateMenuString()
 
     let title = ""
@@ -175,9 +173,10 @@ function! s:CreateMenuString()
         let title = "Leader Key Menu:"
     endif
 
-    " Then add the different user configurations
+    " Then add the different user configuration
     for [key, val] in items(g:leaderMenu)
         if key != "name"
+            " Extract description (ix 0 = cmd, ix 1 = description)
             let str = "[". key . "] " . val[1]
             call add(s:menuList, str)
         endif
@@ -190,18 +189,27 @@ function! s:CreateMenuString()
 endfunction
 
 
+" Used to create the final layout of the menu,
+" by arranging the entry over the full window space
+function! s:MenuLayout(menuList)
+
+    let menu = []
+
+    return menu
+
+endfunction
+
+
 " Execute command requested by user
 function! s:ExecCommand(cmd)
 
-    " Check first the command is in dict
-    if has_key(g:leaderMenu, a:cmd)
-        " Extract command (ix 0 = cmd, ix 1 = description)
-        let cmd = get(g:leaderMenu, a:cmd)[0]
-    else
-        echo("ERROR: vim-leader_mapper: no such command in configuration!")
+    " Check first the command exists in dict
+    if !has_key(g:leaderMenu, a:cmd)
         return
     endif
 
+    " Extract command (ix 0 = cmd, ix 1 = description)
+    let cmd = get(g:leaderMenu, a:cmd)[0]
     " Finally run the command
     noautocmd execute cmd
 
