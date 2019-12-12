@@ -54,17 +54,33 @@ endfunction
 " Open floating window where menu is displayed. Neovim only
 function! s:OpenNeovimWin()
 
-    let height = &lines - 3
-    let width = float2nr(&columns - (&columns * 2 / 10))
-    let col = float2nr((&columns - width) / 2)
+    if g:leaderMapperPos != "center"
+        echo "WARNING: vim-leader-mapper plugin - g:leaderMapperPos is not correct (can be top/bottom/center)"
+    endif
+
+    "From menu dimension compute the window size & placement
+    let height = len(s:menuList)
+
+    " Handles the window position
+    if g:leaderMapperPos == "top"
+        let row = 2
+    elseif g:leaderMapperPos == "bottom"
+        let row = &lines - height - 4 " to avoid overlap status line
+    else
+        let row  = (&lines - height) / 2
+    endif
+
+    " Use row 2 because 0 is the title, 1 is a blank line
+    let width = len(s:menuList[2])
+    let col = (&columns - width) / 2
 
     " Set the position, size, ... of the floating window.
     let opts = {
                 \ 'relative': 'editor',
-                \ 'row': height * 0.3,
-                \ 'col': col + 30,
-                \ 'width': width * 2 / 3,
-                \ 'height': height / 2
+                \ 'row': row,
+                \ 'col': col,
+                \ 'width': width,
+                \ 'height': height
                 \ }
 
     " Open floating windows to display our menu
@@ -76,8 +92,26 @@ function! s:OpenNeovimWin()
     setlocal nobuflisted
     setlocal bufhidden=hide
     setlocal nonumber
+    setlocal colorcolumn=
     setlocal norelativenumber
     setlocal signcolumn=no
+
+endfunction
+
+" Return the name of the longest string in a list
+function! s:GetLongestLine(list)
+
+    let len = 0
+    " Simply parse one by one the line and check if
+    " its length is the longest
+    for line in a:list
+        let _temp = len(line)
+        if _temp > len
+            let len = _temp
+        endif
+    endfor
+
+    return len
 
 endfunction
 
@@ -161,7 +195,20 @@ function! s:CreateMenuString()
     let title = ""
     let s:menuList = []
 
-    " First parse the menu to search for a name
+    " First add the different user configuration
+    for [key, val] in items(g:leaderMenu)
+        if key != "name"
+            " Extract description (ix 0 = cmd, ix 1 = description)
+            " and add a space margin
+            let str = " [". key . "] " . val[1] . " "
+            call add(s:menuList, str)
+        endif
+    endfor
+
+    " Put in shape the menu
+    call s:DoMenuLayout()
+
+    " Then parse the menu to search for a name
     for [key, val] in items(g:leaderMenu)
         if key == "name" && !empty(val)
             let title = val
@@ -173,29 +220,48 @@ function! s:CreateMenuString()
         let title = "Leader Key Menu:"
     endif
 
-    " Then add the different user configuration
-    for [key, val] in items(g:leaderMenu)
-        if key != "name"
-            " Extract description (ix 0 = cmd, ix 1 = description)
-            let str = "[". key . "] " . val[1]
-            call add(s:menuList, str)
-        endif
-    endfor
-
-    " Sort list with alphabetic order and ignore case
-    " Append in first elements the menu title
-    let s:menuList = [title, ""] + sort(s:menuList, "i")
+    " Append as first element the menu title and a blank on last line
+    let s:menuList = [title, ""] + s:menuList + [""]
 
 endfunction
 
 
 " Used to create the final layout of the menu,
 " by arranging the entry over the full window space
-function! s:MenuLayout(menuList)
+function! s:DoMenuLayout()
 
-    let menu = []
+    " Sort list with alphabetic order and ignore case
+    let layout = sort(s:menuList, "i")
+    " Get max len of menu items
+    let lenMax = s:GetLongestLine(s:menuList)
+    " Compute window width abnd item per line
+    let winLen = (&columns * g:leaderMapperWidth / 100)
+    let maxItem = winLen / lenMax
+    let maxItemLen = float2nr(ceil(winLen / maxItem))
 
-    return menu
+    " Recreate the final layout based on maximum item per row
+    let s:menuList = []
+    let tempItem = ""
+
+    let iLen = 0
+    " Concatenate the items to display several by line as
+    " long it fits into the window
+    for item in layout
+
+        let itemLen = len(item)
+        let missingLen = maxItemLen - itemLen
+        " Append whitespace to have equal length entries
+        let newItem = item .repeat(" ", missingLen)
+        let tempItem = tempItem . newItem
+        " If matched the num of item per line, appe-nd and continue
+        let iLen += 1
+        if iLen == maxItem
+            call add(s:menuList, tempItem)
+            let tempItem = ""
+            let iLen = 0
+        endif
+
+    endfor
 
 endfunction
 

@@ -1,70 +1,84 @@
-*vim-leader-mapper.txt*      Leader key mapper & menu maker
+*vim-leader-mapper.txt*      Leader key menu maker
 *leader-mapper*
 
 ==============================================================================
 CONTENTS                                              *leader-mapper-contents*
 
-Overview                                    |leader-mapper-overview|
+Overview                                              |leader-mapper-overview|
 
-Installation                                |leader-mapper-installation|
+Installation                                      |leader-mapper-installation|
 
-Changelog                                   |leader-mapper-changelog|
+Changelog                                            |leader-mapper-changelog|
 
 
 =================================================================================
 Overview                                                 *leader-mapper-overview*
 
-|vim-leader-mapper| is a Neovim plugin to create leader key mapping and a visual menu to display them.
-It's basically a copy of Spacemacs interactive menu, relying on leader key to toggle it.
+|vim-leader-mapper| is a Neovim plugin to create leader key mapping and a visual menu to display
+them. It's basically a copy of Spacemacs interactive menu, relying on leader key to toggle it
+(any key is possible).
 
 - Easy to use: the user can simply add his own commands with few setup and map them to leader key.
 - Configurable: the user can associate any command (internal or external command).
 - Fast: the plugin is very small, written in pure vimL.
 - No intrusion: no change on user mapping & configuration.
 
-It's also inspired from vim-leader-guide] but simpler and using floating window to display leader menu.
+It's also inspired from vim-leader-guide but it's simpler and use floating window to display
+the menu.
 
 
 =====================================================================================
-Overview                                                 *leader-mapper-installation*
+Installation                                             *leader-mapper-installation*
 
 
-Use Vim-Plug or any other plugin manager to install it.
+Use Vim-Plug or any other plugin manager to install it:
 
-Plug 'damofthemoon/vim-leader-mapper'
-
-
-Follows a configuration example, binding regular Vim commands and FZF:
-
-" Define the menu content with a Vim dictionary
-let g:leaderMenu = {'name':  "",
-             \'f': [":Files",                       "FZF file search"],
-             \'b': [":Buffers",                     "FZF buffer search"],
-             \'s': [":BLines",                      "FZF text search into current buffer"],
-             \'S': [":Lines",                       "FZF text search across loaded buffers"],
-             \'g': [":BCommits",                    "FZF git commits of the current buffer"],
-             \'G': [":Commits",                     "FZF git commits of the repository"],
-             \'v': [':vsplit',                      'Split buffer vertically'],
-             \'h': [':split',                       'Split buffer horizontally'],
-             \'d': [':bd',                          'Close buffer'],
-             \'r': [':so $MYVIMRC',                 'Reload vimrc without restarting Vim'],
-             \'l': [':ls',                          'List opened buffers'],
-             \'t': [':Tags',                        'FZF tag search'],
-             \'o': [':normal gf',                   'Open file under cursor'],
-             \}
+    Plug 'damofthemoon/vim-leader-mapper'
 
 
-Finally to bind to bind leader key to space and toggle the menu on each space pressure:
+Follows a configuration example, binding regular Vim commands and FZF calls:
 
-" Define leader key to space and call vim-leader-mapper
-nnoremap <Space> <Nop>
-let mapleader = "\<Space>"
-nnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
-vnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
+    " Define the menu content with a Vim dictionary
+    let g:leaderMenu = {'name':  "",
+                \'f': [":Files",                       "FZF file search"],
+                \'b': [":Buffers",                     "FZF buffer search"],
+                \'s': [":BLines",                      "FZF text search into current buffer"],
+                \'S': [":Lines",                       "FZF text search across loaded buffers"],
+                \'g': [":BCommits",                    "FZF git commits of the current buffer"],
+                \'G': [":Commits",                     "FZF git commits of the repository"],
+                \'v': [':vsplit',                      'Split buffer vertically'],
+                \'h': [':split',                       'Split buffer horizontally'],
+                \'d': [':bd',                          'Close buffer'],
+                \'r': [':so $MYVIMRC',                 'Reload vimrc without restarting Vim'],
+                \'l': [':ls',                          'List opened buffers'],
+                \'t': [':Tags',                        'FZF tag search'],
+                \'o': [':normal gf',                   'Open file under cursor'],
+                \}
+
+
+Finally to bind leader key to space and toggle the menu on each space pressure:
+
+    " Define leader key to space and call vim-leader-mapper
+    nnoremap <Space> <Nop>
+    let mapleader = "\<Space>"
+    nnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
+    vnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
+
+
+One could want to specify the dimension and position of the window. This can be done
+with two parameters.
+
+To define the vertical placement of the window. Can be top, bottom or center (default is center):
+
+    let g:leaderMapperPos = "center"
+
+To define the window's width, in percentage of the Vim window (default is 70%):
+
+    let g:leaderMapperWidth = 70
 
 
 =================================================================================
 Changelog                                               *leader-mapper-changelog*
 
 
-2019 - Initial release
+12/11/2019 - Initial release

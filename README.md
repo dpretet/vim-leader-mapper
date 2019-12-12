@@ -1,4 +1,4 @@
-# vim leader-mapper
+# vim-leader-mapper
 
 # Introduction
 
@@ -10,21 +10,21 @@ It's basically a copy of Spacemacs interactive menu, relying on leader key to to
 - Fast: the plugin is very small, written in pure vimL.
 - No intrusion: no change on user mapping & configuration.
 
-It's also inspired from [vim-leader-guide](github.com/hecal3/vim-leader-guide) but simpler and using
-floating window to display leader menu.
+It's also inspired from [vim-leader-guide](github.com/hecal3/vim-leader-guide) but it's simpler
+and use floating window to display leader menu.
 
 
 # Installation
 
-[Use Vim-Plug](https://github.com/junegunn/vim-plug) or any other plugin manager to install it.
+Use [Vim-Plug](https://github.com/junegunn/vim-plug) or any other plugin manager to install it.
 
 ```vim
-    Plug 'damofthemoon/vim-leader-mapper'
+Plug 'damofthemoon/vim-leader-mapper'
 ```
 
-Follows a configuration example, binding regular Vim commands and FZF:
+Follows a configuration example, binding regular Vim commands and FZF calls:
 
-````vim
+```vim
 
 " Define the menu content with a Vim dictionary
 let g:leaderMenu = {'name':  "",
@@ -46,7 +46,7 @@ let g:leaderMenu = {'name':  "",
 
 Finally to bind to bind leader key to space and toggle the menu on each space pressure:
 
-````vim
+```vim
 " Define leader key to space and call vim-leader-mapper
 nnoremap <Space> <Nop>
 let mapleader = "\<Space>"
@@ -54,8 +54,29 @@ nnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
 vnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
 ```
 
+One could want to specify the position of the window. This can be done with two parameters.
+
+To define the vertical placement of the window. Can be top, bottom or center (default is `center`):
+
+```vim
+let g:leaderMapperPos = "center"
+```
+
+To define the window's width, in percentage of the Vim window (default is `70%`):
+
+```vim
+let g:leaderMapperWidth = 70
+```
+
+
 # TODO
 
-- Enhance display: provide color and better render the menu (today single row)
+- Enhance display: provide color
 - Support sub-menu
-- Support different position on screen, today only centered
+- Support Vim 8
+
+
+# License
+
+This plugin is under MIT license. Do whatever you want with it, and don't hesitate to fork it and
+contribute!

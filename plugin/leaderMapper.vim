@@ -13,18 +13,13 @@ let loaded_leader_mapper_vim = 1
 " Next initialize the variable if not specified by user
 
 if !has('g:leaderMapperPos')
-    " Can be center, NW, SW, NE, SE
+    " Can be center, top, bottom
     let g:leaderMapperPos = "center"
 endif
 
 if !has('g:leaderMapperWidth')
     " Percentage of the window
-    let g:leaderMapperWidth = 50
-endif
-
-if !has('g:leaderMapperHeight')
-    " Percentage of the window
-    let g:leaderMapperHeight = 50
+    let g:leaderMapperWidth = 70
 endif
 
 " Save compatible mode
