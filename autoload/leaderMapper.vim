@@ -277,7 +277,7 @@ function! s:ExecCommand(cmd)
     " Extract command (ix 0 = cmd, ix 1 = description)
     let cmd = get(g:leaderMenu, a:cmd)[0]
     " Finally run the command
-    noautocmd execute cmd
+    execute cmd
 
 endfunction
 
