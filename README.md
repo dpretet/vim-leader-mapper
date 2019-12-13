@@ -46,7 +46,7 @@ let g:leaderMenu = {'name':  "",
              \}
 ```
 
-Finally to bind to bind leader key to space and toggle the menu on each space pressure:
+Finally to bind leader key to space and toggle the menu on each space pressure:
 
 ```vim
 " Define leader key to space and call vim-leader-mapper
