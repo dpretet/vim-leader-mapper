@@ -58,7 +58,7 @@ vnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
 
 One could want to specify the position of the window. This can be done with two parameters.
 
-To define the vertical placement of the window. Can be top, bottom or center (default is `center`):
+To define the vertical placement of the window. Can be `top`, `bottom` or `center` (default is `center`):
 
 ```vim
 let g:leaderMapperPos = "center"
