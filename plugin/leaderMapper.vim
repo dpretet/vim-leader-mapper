@@ -10,6 +10,9 @@ endif
 
 let loaded_leader_mapper_vim = 1
 
+" Source syntax highlighting
+runtime! syntax/leaderMapper.vim
+
 " Next initialize the variable if not specified by user
 
 if !has('g:leaderMapperPos')

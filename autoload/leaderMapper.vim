@@ -9,7 +9,6 @@ let s:save_cpo = &cpo
 " Reset compatible mode to default value
 set cpo&vim
 
-
 " Startup function to call the plugin from user land
 function! leaderMapper#start()
 
@@ -71,7 +70,8 @@ function! s:OpenNeovimWin()
     endif
 
     " Use row 2 because 0 is the title, 1 is a blank line
-    let width = len(s:menuList[2])
+    " -3 to put window limit closed to border
+    let width = len(s:menuList[3]) - 3
     let col = (&columns - width) / 2
 
     " Set the position, size, ... of the floating window.
@@ -88,11 +88,11 @@ function! s:OpenNeovimWin()
     " Set floating window highlighting
     call setwinvar(s:win, '&winhl', 'Normal:Pmenu')
 
+    setlocal colorcolumn=
     setlocal buftype=nofile
     setlocal nobuflisted
     setlocal bufhidden=hide
     setlocal nonumber
-    setlocal colorcolumn=
     setlocal norelativenumber
     setlocal signcolumn=no
 
@@ -200,7 +200,7 @@ function! s:CreateMenuString()
         if key != "name"
             " Extract description (ix 0 = cmd, ix 1 = description)
             " and add a space margin
-            let str = " [". key . "] " . val[1] . " "
+            let str = " [". key . "] " . val[1]
             call add(s:menuList, str)
         endif
     endfor
@@ -217,7 +217,7 @@ function! s:CreateMenuString()
 
     " If title doesn't exist, simply name it 'Menu'
     if empty(title)
-        let title = "Leader Key Menu:"
+        let title = " Leader Key Menu:"
     endif
 
     " Append as first element the menu title and a blank on last line
@@ -240,28 +240,32 @@ function! s:DoMenuLayout()
     let maxItemLen = float2nr(ceil(winLen / maxItem))
 
     " Recreate the final layout based on maximum item per row
-    let s:menuList = []
-    let tempItem = ""
+    let s:menuList = [" ╭" . repeat("─", (maxItem * maxItemLen) + 1) . "╮"]
+    let tempItem = " │ "
 
     let iLen = 0
     " Concatenate the items to display several by line as
     " long it fits into the window
     for item in layout
-
+        " Get numbver of space to append
         let itemLen = len(item)
         let missingLen = maxItemLen - itemLen
         " Append whitespace to have equal length entries
         let newItem = item .repeat(" ", missingLen)
         let tempItem = tempItem . newItem
-        " If matched the num of item per line, appe-nd and continue
+        " If matched the num of item per line, append and continue
         let iLen += 1
         if iLen == maxItem
+            let tempItem = tempItem . "│"
             call add(s:menuList, tempItem)
-            let tempItem = ""
+            let tempItem = " │ "
             let iLen = 0
         endif
 
     endfor
+
+    let bot = " ╰" . repeat("─", (maxItem * maxItemLen) + 1) . "╯"
+    call add(s:menuList, bot)
 
 endfunction
 
