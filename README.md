@@ -13,7 +13,7 @@ It's basically a copy of Spacemacs interactive menu, relying on leader key to to
 It's also inspired from [vim-leader-guide](https://github.com/hecal3/vim-leader-guide) but it's simpler
 and use floating window to display leader menu.
 
-<a href="https://asciinema.org/a/7hGheGf2zs13m9Zww04vdLbSA" target="_blank"><img src="https://asciinema.org/a/7hGheGf2zs13m9Zww04vdLbSA.svg" /></a>
+<!--a href="https://asciinema.org/a/7hGheGf2zs13m9Zww04vdLbSA" target="_blank"><img src="https://asciinema.org/a/7hGheGf2zs13m9Zww04vdLbSA.svg" /></a-->
 
 
 # Installation
