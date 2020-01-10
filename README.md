@@ -71,10 +71,39 @@ let g:leaderMapperWidth = 70
 ```
 
 
+It's also possible to add submenu binded with a key. Here is an example:
+
+```vim
+
+" Define the menu dedicated to FZF
+let fzfMenu = {'name':  "",
+             \'f': [":Files",                       "FZF file search"],
+             \'b': [":Buffers",                     "FZF buffer search"],
+             \'s': [":BLines",                      "FZF text search into current buffer"],
+             \'S': [":Lines",                       "FZF text search across loaded buffers"],
+             \'g': [":BCommits",                    "FZF git commits of the current buffer"],
+             \'G': [":Commits",                     "FZF git commits of the repository"],
+             \}
+
+" Define the menu content including the above menu
+let g:leaderMenu = {'name':  "",
+             \'f': [fzfMenu,                        "FZF menu"],
+             \'v': [':vsplit',                      'Split buffer vertically'],
+             \'h': [':split',                       'Split buffer horizontally'],
+             \'d': [':bd',                          'Close buffer'],
+             \'r': [':so $MYVIMRC',                 'Reload vimrc without restarting Vim'],
+             \'l': [':ls',                          'List opened buffers'],
+             \'t': [':Tags',                        'FZF tag search'],
+             \'o': [':normal gf',                   'Open file under cursor'],
+             \}
+```
+
+Pressing 'f' key will open the dedicated menu to FZF.
+
+
 # TODO
 
 - Enhance display: provide color
-- Support sub-menu
 - Support Vim 8
 
 

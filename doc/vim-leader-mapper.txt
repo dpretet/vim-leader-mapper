@@ -77,12 +77,43 @@ To define the window's width, in percentage of the Vim window (default is 70%):
     let g:leaderMapperWidth = 70
 
 
+It's also possible to add submenu binded with a key. Here is an example:
+
+
+    " Define the menu dedicated to FZF
+    let fzfMenu = {'name':  "",
+                 \'f': [":Files",                       "FZF file search"],
+                 \'b': [":Buffers",                     "FZF buffer search"],
+                 \'s': [":BLines",                      "FZF text search into current buffer"],
+                 \'S': [":Lines",                       "FZF text search across loaded buffers"],
+                 \'g': [":BCommits",                    "FZF git commits of the current buffer"],
+                 \'G': [":Commits",                     "FZF git commits of the repository"],
+                 \}
+
+    " Define the menu content including the above menu
+    let g:leaderMenu = {'name':  "",
+                 \'f': [fzfMenu,                        "FZF menu"],
+                 \'v': [':vsplit',                      'Split buffer vertically'],
+                 \'h': [':split',                       'Split buffer horizontally'],
+                 \'d': [':bd',                          'Close buffer'],
+                 \'r': [':so $MYVIMRC',                 'Reload vimrc without restarting Vim'],
+                 \'l': [':ls',                          'List opened buffers'],
+                 \'t': [':Tags',                        'FZF tag search'],
+                 \'o': [':normal gf',                   'Open file under cursor'],
+                 \}
+
+Pressing 'f' key will open the dedicated menu to FZF.
+
 =================================================================================
 Changelog                                               *leader-mapper-changelog*
 
+v1.1.0 - 01/10/2020 - Add sub-menu support
+                    - fix several small bugs
 
-v1.0.0 - 12/11/2019 - Initial release
+v1.0.2 - 12/17/2019 - Add border to floating window
 
 v1.0.1 - 12/12/2019 - Minor syntax fix in doc
 
-v1.0.2 - 12/17/2019 - Add border to floating window
+v1.0.0 - 12/11/2019 - Initial release
+
+
