@@ -269,7 +269,7 @@ function! s:DoMenuLayout(menuContent)
         let itemLen = len(item)
         let missingLen = maxItemLen - itemLen
         " Append whitespace to have equal length entries
-        let newItem = item .repeat(" ", missingLen)
+        let newItem = item . repeat(" ", missingLen)
         let tempItem = tempItem . newItem
         " If matched the num of item per line, append and continue
         let iLen += 1
@@ -277,6 +277,11 @@ function! s:DoMenuLayout(menuContent)
             call add(finalMenu, tempItem . "│")
             let tempItem = " │ "
             let iLen = 0
+        " if reach the last item, add it
+        elseif item == sortedMenu[-1]
+            let missingLen = winLen - len(tempItem)
+            let tempItem = tempItem . repeat(" ", missingLen+3) " append spaces, +3 because border
+            call add(finalMenu, tempItem . "│")
         endif
 
     endfor
