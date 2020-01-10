@@ -10,32 +10,41 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 " Startup function to call the plugin from user land
-function! leaderMapper#start()
+function! leaderMapper#start(...)
 
-    " Exit if user forgot to define a menu
-    if !exists('g:leaderMenu')
-        echoerr "ERROR: vim-leader-mapper plugin - No menu defined in user configuration!"
-        return
+    " If no arguments passed, uses g:leaderMenu
+    if (a:0 == 0)
+        " Exit if user forgot to define g:leaderMenu
+        if !exists('g:leaderMenu')
+            echoerr "ERROR: vim-leader-mapper plugin - No menu defined in user configuration!"
+            return
+        endif
+        " Launch rendering
+        call s:LoadMenu(g:leaderMenu)
+    " Else uses the argument passed but check first if is a dict
+    else
+        if type(a:1) != 4
+            echoerr "ERROR: vim-leader-mapper plugin - Menu passed to start function is not a dict"
+            return
+        endif
+        " Launch rendering
+        call s:LoadMenu(a:1)
     endif
 
-    " For first launch, start from uppest menu level.
-    let s:menuLevel = 'main'
-    " Launch rendering
-    call s:LoadMenu()
 
 endfunction
 
 
 " Load menu, meaning create the buffer, display the window
-" and populate the content with g:leaderMenu configuration
-function! s:LoadMenu()
+" and populate the content with leaderMenu configuration
+function! s:LoadMenu(leaderMenu)
 
     " Create the string menu to fill the buffer to display
-    call s:FillMenu()
+    call s:FillMenu(a:leaderMenu)
     " Open the window menu
     call s:OpenMenu()
     " Wait user actions
-    call s:WaitUserAction()
+    call s:WaitUserAction(a:leaderMenu)
 
 endfunction
 
@@ -53,25 +62,26 @@ endfunction
 " Open floating window where menu is displayed. Neovim only
 function! s:OpenNeovimWin()
 
-    if g:leaderMapperPos != "center"
+    if g:leaderMapperPos != "center" && g:leaderMapperPos != "top" && g:leaderMapperPos != "bottom"
         echo "WARNING: vim-leader-mapper plugin - g:leaderMapperPos is not correct (can be top/bottom/center)"
+        let g:leaderMapperPos = "center"
     endif
 
     "From menu dimension compute the window size & placement
-    let height = len(s:menuList)
+    let height = len(s:leaderMenu)
 
     " Handles the window position
     if g:leaderMapperPos == "top"
         let row = 2
     elseif g:leaderMapperPos == "bottom"
-        let row = &lines - height - 4 " to avoid overlap status line
+        let row = &lines - height - 4 " -4 to avoid overlap status line
     else
         let row  = (&lines - height) / 2
     endif
 
-    " Use row 2 because 0 is the title, 1 is a blank line
+    " Use row 3 because 0 is the title, 1 is a blank line
     " -3 to put window limit closed to border
-    let width = len(s:menuList[3]) - 3
+    let width = len(s:leaderMenu[3]) - 3
     let col = (&columns - width) / 2
 
     " Set the position, size, ... of the floating window.
@@ -97,6 +107,7 @@ function! s:OpenNeovimWin()
     setlocal signcolumn=no
 
 endfunction
+
 
 " Return the name of the longest string in a list
 function! s:GetLongestLine(list)
@@ -156,7 +167,7 @@ endfunction
 
 
 " Wait for user action to decide next steps
-function! s:WaitUserAction()
+function! s:WaitUserAction(leaderMenu)
 
     " redraw to force display of menu (hidden by default with getchar call)
     redraw
@@ -167,49 +178,49 @@ function! s:WaitUserAction()
     " Close menu window
     call s:CloseMenu()
     " Retrieve command and execute it
-    call s:ExecCommand(userAction)
+    call s:ExecCommand(a:leaderMenu, userAction)
 
 endfunction
 
 
-" Read g:leaderMenu/s:menuLevel and fill the menu's buffer
-function! s:FillMenu()
+" Read leaderMenu and fill the menu's buffer
+function! s:FillMenu(leaderMenu)
 
-    " Create the buffer used along the menu
-    " Delete first if exists
+    " Window buffer, delete first if exists
     if exists('s:menuBuffer')
         unlet s:menuBuffer
     endif
 
     " Convert the conf into a list of string and create/fill the buffer
-    call s:CreateMenuString()
+    let s:leaderMenu = s:CreateMenu(a:leaderMenu)
     let s:menuBuffer = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:menuBuffer, 0, 0, 0, s:menuList)
+    call nvim_buf_set_lines(s:menuBuffer, 0, 0, 0, s:leaderMenu)
 
 endfunction
 
 
-" Parse g:leaderMenu and create a list of string to display
-function! s:CreateMenuString()
+" Parse leaderMenu and create a list of string to display
+function! s:CreateMenu(leaderMenu)
 
+    " Menu title
     let title = ""
-    let s:menuList = []
+    let strMenu = []
 
     " First add the different user configuration
-    for [key, val] in items(g:leaderMenu)
+    for [key, val] in items(a:leaderMenu)
         if key != "name"
             " Extract description (ix 0 = cmd, ix 1 = description)
             " and add a space margin
             let str = " [". key . "] " . val[1]
-            call add(s:menuList, str)
+            call add(strMenu, str)
         endif
     endfor
 
     " Put in shape the menu
-    call s:DoMenuLayout()
+    let menuLayout = s:DoMenuLayout(strMenu)
 
     " Then parse the menu to search for a name
-    for [key, val] in items(g:leaderMenu)
+    for [key, val] in items(a:leaderMenu)
         if key == "name" && !empty(val)
             let title = val
         endif
@@ -221,33 +232,40 @@ function! s:CreateMenuString()
     endif
 
     " Append as first element the menu title and a blank on last line
-    let s:menuList = [title, ""] + s:menuList + [""]
+    let finalMenu = [title, ""] + menuLayout + [""]
+    return finalMenu
 
 endfunction
 
 
 " Used to create the final layout of the menu,
 " by arranging the entry over the full window space
-function! s:DoMenuLayout()
+function! s:DoMenuLayout(menuContent)
 
     " Sort list with alphabetic order and ignore case
-    let layout = sort(s:menuList, "i")
+    let sortedMenu = sort(a:menuContent, "i")
     " Get max len of menu items
-    let lenMax = s:GetLongestLine(s:menuList)
-    " Compute window width abnd item per line
+    let lenMax = s:GetLongestLine(a:menuContent)
+    " Compute window width and item nb per line
     let winLen = (&columns * g:leaderMapperWidth / 100)
+    " Maximum per line
     let maxItem = winLen / lenMax
+    " Check nb of entry to insert and shorten maxItem
+    " to avoid crashing the loop
+    if len(sortedMenu) < maxItem
+        let maxItem = len(sortedMenu)
+    endif
+    " Maxim item len allowed per column
     let maxItemLen = float2nr(ceil(winLen / maxItem))
-
-    " Recreate the final layout based on maximum item per row
-    let s:menuList = [" ╭" . repeat("─", (maxItem * maxItemLen) + 1) . "╮"]
+    " Create the final menu based on maximum item per row. Append first the border
+    let finalMenu = [" ╭" . repeat("─", (maxItem * maxItemLen) + 1) . "╮"]
     let tempItem = " │ "
 
     let iLen = 0
     " Concatenate the items to display several by line as
     " long it fits into the window
-    for item in layout
-        " Get numbver of space to append
+    for item in sortedMenu
+        " Get number of space to append
         let itemLen = len(item)
         let missingLen = maxItemLen - itemLen
         " Append whitespace to have equal length entries
@@ -256,32 +274,38 @@ function! s:DoMenuLayout()
         " If matched the num of item per line, append and continue
         let iLen += 1
         if iLen == maxItem
-            let tempItem = tempItem . "│"
-            call add(s:menuList, tempItem)
+            call add(finalMenu, tempItem . "│")
             let tempItem = " │ "
             let iLen = 0
         endif
 
     endfor
 
-    let bot = " ╰" . repeat("─", (maxItem * maxItemLen) + 1) . "╯"
-    call add(s:menuList, bot)
+    " Append bottom and return the formatted menu
+    let bottom = " ╰" . repeat("─", (maxItem * maxItemLen) + 1) . "╯"
+    call add(finalMenu, bottom)
+    return finalMenu
 
 endfunction
 
 
 " Execute command requested by user
-function! s:ExecCommand(cmd)
+function! s:ExecCommand(leaderMenu, cmd)
 
     " Check first the command exists in dict
-    if !has_key(g:leaderMenu, a:cmd)
+    if !has_key(a:leaderMenu, a:cmd)
         return
     endif
 
     " Extract command (ix 0 = cmd, ix 1 = description)
-    let cmd = get(g:leaderMenu, a:cmd)[0]
-    " Finally run the command
-    execute cmd
+    let choice = get(a:leaderMenu, a:cmd)[0]
+    " Check if is a dict, so a sub-menu
+    if type(choice) == 4
+        call s:LoadMenu(choice)
+    " Else run the command
+    else
+        execute choice
+    endif
 
 endfunction
 
