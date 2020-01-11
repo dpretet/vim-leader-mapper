@@ -8,7 +8,6 @@ It's basically a copy of Spacemacs interactive menu, relying on leader key to to
 - Easy to use: the user can simply add his own commands with few setup and map them to leader key.
 - Configurable: the user can associate any command (internal or external command).
 - Fast: the plugin is very small, written in pure vimL.
-- No intrusion: no change on user mapping & configuration.
 
 It's also inspired from [vim-leader-guide](https://github.com/hecal3/vim-leader-guide) but it's simpler
 and use floating window to display leader menu.
