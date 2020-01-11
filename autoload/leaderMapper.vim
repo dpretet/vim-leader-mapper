@@ -72,9 +72,9 @@ function! s:OpenNeovimWin()
 
     " Handles the window position
     if g:leaderMapperPos == "top"
-        let row = 2
+        let row = 2  " 2 to put the window slightly below the window's top
     elseif g:leaderMapperPos == "bottom"
-        let row = &lines - height - 4 " -4 to avoid overlap status line
+        let row = &lines - height - 4 " -4 to avoid status line overlap
     else
         let row  = (&lines - height) / 2
     endif
@@ -162,7 +162,7 @@ endfunction
 
 
 function! s:CloseVimMenu()
-    " TODO: populate for Vim
+    " TODO: populate for Vim8
 endfunction
 
 
@@ -195,6 +195,7 @@ function! s:FillMenu(leaderMenu)
     let s:leaderMenu = s:CreateMenu(a:leaderMenu)
     let s:menuBuffer = nvim_create_buf(v:false, v:true)
     call nvim_buf_set_lines(s:menuBuffer, 0, 0, 0, s:leaderMenu)
+    call nvim_buf_set_option(s:menuBuffer, 'filetype', 'leaderMapper')
 
 endfunction
 
@@ -279,8 +280,8 @@ function! s:DoMenuLayout(menuContent)
             let iLen = 0
         " if reach the last item, add it
         elseif item == sortedMenu[-1]
-            let missingLen = winLen - len(tempItem)
-            let tempItem = tempItem . repeat(" ", missingLen+4) " append spaces, +4 because border
+            let missingLen = (maxItem - iLen) * maxItemLen
+            let tempItem = tempItem . repeat(" ", missingLen)
             call add(finalMenu, tempItem . "│")
         endif
 
