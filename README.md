@@ -103,7 +103,6 @@ Pressing 'f' key will open the dedicated menu to FZF.
 
 # TODO
 
-- Enhance display: provide color
 - Support Vim 8
 
 
