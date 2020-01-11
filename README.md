@@ -76,7 +76,7 @@ It's also possible to add submenu binded with a key. Here is an example:
 ```vim
 
 " Define the menu dedicated to FZF
-let fzfMenu = {'name':  "",
+let fzfMenu = {'name':  "FZF Menu",
              \'f': [":Files",                       "FZF file search"],
              \'b': [":Buffers",                     "FZF buffer search"],
              \'s': [":BLines",                      "FZF text search into current buffer"],
@@ -86,7 +86,7 @@ let fzfMenu = {'name':  "",
              \}
 
 " Define the menu content including the above menu
-let g:leaderMenu = {'name':  "",
+let g:leaderMenu = {'name':  "Global Menu",
              \'f': [fzfMenu,                        "FZF menu"],
              \'v': [':vsplit',                      'Split buffer vertically'],
              \'h': [':split',                       'Split buffer horizontally'],
