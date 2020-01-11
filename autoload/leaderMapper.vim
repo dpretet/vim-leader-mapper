@@ -280,7 +280,7 @@ function! s:DoMenuLayout(menuContent)
         " if reach the last item, add it
         elseif item == sortedMenu[-1]
             let missingLen = winLen - len(tempItem)
-            let tempItem = tempItem . repeat(" ", missingLen+3) " append spaces, +3 because border
+            let tempItem = tempItem . repeat(" ", missingLen+4) " append spaces, +4 because border
             call add(finalMenu, tempItem . "│")
         endif
 
