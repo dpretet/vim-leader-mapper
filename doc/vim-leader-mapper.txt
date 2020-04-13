@@ -104,8 +104,16 @@ It's also possible to add submenu binded with a key. Here is an example:
 
 Pressing 'f' key will open the dedicated menu to FZF.
 
+In case your function/command binded needs to access the lines range of a
+visual selection, vim-leader-mapper setup two variables: `leaderMapperLineStart`
+and `leaderMapperLineEnd`. These variables are setup to line numbers as long the
+plugin is executed. When closing, it will setup them to `-1`.
+
 =================================================================================
 Changelog                                               *leader-mapper-changelog*
+
+v1.2.0 - 13/04/2020 - Fix issue to call functions/commands with visual selection
+                      Issue #4
 
 v1.1.1 - 01/11/2020 - Fix issue in display if last menu list is not fully filled
                     - Add keyword highlight in menu

@@ -1,6 +1,6 @@
 # vim-leader-mapper
 
-# Introduction
+## Introduction
 
 Vim-Leader-Mapper is a Neovim plugin to create leader key mapping and a visual
 menu to display them.  It's basically a copy of Spacemacs interactive menu,
@@ -16,7 +16,7 @@ It's also inspired from
 and use floating window to display leader menu.
 
 
-# Installation
+## Installation
 
 Use [Vim-Plug](https://github.com/junegunn/vim-plug) or any other plugin
 manager to install it.
@@ -24,6 +24,8 @@ manager to install it.
 ```vim
 Plug 'damofthemoon/vim-leader-mapper'
 ```
+
+## Configuration
 
 Follows a configuration example, binding regular Vim commands and FZF calls:
 
@@ -53,8 +55,8 @@ Finally to bind leader key to space and toggle the menu on each space pressure:
 " Define leader key to space and call vim-leader-mapper
 nnoremap <Space> <Nop>
 let mapleader = "\<Space>"
-nnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
-vnoremap <silent> <leader> :call leaderMapper#start() "<Space>"<CR>
+nnoremap <silent> <leader> :LeaderMapper "<Space>"<CR>
+vnoremap <silent> <leader> :LeaderMapper "<Space>"<CR>
 ```
 
 One could want to specify the position of the window. This can be done with two
@@ -104,8 +106,12 @@ let g:leaderMenu = {'name':  "Global Menu",
 
 Pressing 'f' key will open the dedicated menu to FZF.
 
+In case your function/command binded needs to access the lines range of a
+visual selection, vim-leader-mapper setup two variables: `leaderMapperLineStart`
+and `leaderMapperLineEnd`. These variables are setup to line numbers as long the
+plugin is executed. When closing, it will setup them to `-1`.
 
-# License
+## License
 
 This plugin is under MIT license. Do whatever you want with it, and don't
 hesitate to fork it and contribute!

@@ -22,13 +22,20 @@ if !has('g:leaderMapperWidth')
     let g:leaderMapperWidth = 70
 endif
 
+" Enable debug prints in :messages
+let g:leaderMapperDebug = 0
+
+" Shared variable with commands/functions to describe visual selection
+let g:leaderMapperLineStart = -1
+let g:leaderMapperLineEnd = -1
+
 " Save compatible mode
 let s:save_cpo = &cpo
 " Reset compatible mode to default value
 set cpo&vim
 
 " Declare startup command
-command! -nargs=0 StartLeaderMapper call leaderMapper#start()
+command! -nargs=? -range LeaderMapper call leaderMapper#start(<line1>,<line2>)
 
 " Restore compatible mode
 let &cpo = s:save_cpo

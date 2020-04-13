@@ -12,24 +12,29 @@ set cpo&vim
 " Startup function to call the plugin from user land
 function! leaderMapper#start(...)
 
-    " If no arguments passed, uses g:leaderMenu
-    if (a:0 == 0)
-        " Exit if user forgot to define g:leaderMenu
-        if !exists('g:leaderMenu')
-            echoerr "ERROR: vim-leader-mapper plugin - No menu defined in user configuration!"
-            return
-        endif
-        " Launch rendering
-        call s:LoadMenu(g:leaderMenu)
-    " Else uses the argument passed but check first if is a dict
-    else
-        if type(a:1) != 4
-            echoerr "ERROR: vim-leader-mapper plugin - Menu passed to start function is not a dict"
-            return
-        endif
-        " Launch rendering
-        call s:LoadMenu(a:1)
+    if g:leaderMapperDebug
+        echom "DEBUG: vim-leader-mapper - Start"
     endif
+
+    if (a:0 == 2)
+        if g:leaderMapperDebug
+            echom "       Line start: ".a:1
+            echom "       Line end: ".a:2
+        endif
+        let g:leaderMapperLineStart = a:1
+        let g:leaderMapperLineEnd = a:2
+    endif
+
+    if has('nvim')
+        call s:LoadMenu(g:leaderMenu)
+    else
+        echom "INFO: vim-leader-mapper - Only supports Neovim!"
+    endif
+    
+    " Initialize the strart & end variables to avoid bad behavior
+    " of commands/functions on next call
+    let g:leaderMapperLineStart = -1
+    let g:leaderMapperLineEnd = -1
 
 
 endfunction
@@ -49,22 +54,16 @@ function! s:LoadMenu(leaderMenu)
 endfunction
 
 
-" Display the leader key menu
-function! s:OpenMenu()
-    if has('nvim')
-        call s:OpenNeovimWin()
-    else
-        call s:OpenVimWin()
-    endif
-endfunction
-
-
 " Open floating window where menu is displayed. Neovim only
-function! s:OpenNeovimWin()
+function! s:OpenMenu()
 
     if g:leaderMapperPos != "center" && g:leaderMapperPos != "top" && g:leaderMapperPos != "bottom"
         echo "WARNING: vim-leader-mapper plugin - g:leaderMapperPos is not correct (can be top/bottom/center)"
         let g:leaderMapperPos = "center"
+    endif
+
+    if g:leaderMapperDebug
+        echom "DEBUG: vim-leader-mapper - open window"
     endif
 
     "From menu dimension compute the window size & placement
@@ -127,12 +126,6 @@ function! s:GetLongestLine(list)
 endfunction
 
 
-" Open popup window where menu is displayed. Vim only
-function! s:OpenVimWin()
-    " TODO: Populate for Vim 8
-endfunction
-
-
 " Close leader menu and free the buffer
 function! s:CloseMenu()
 
@@ -141,28 +134,15 @@ function! s:CloseMenu()
         unlet s:menuBuffer
     endif
 
-    " Close menu window
-    if has('nvim')
-        call s:CloseNeovimMenu()
-    else
-        call s:CloseVimMenu()
-    endif
-
-endfunction
-
-
-function s:CloseNeovimMenu()
-
     " Close window (force)
     call nvim_win_close(s:win, 1)
     " Free the window's handle
     unlet s:win
 
-endfunction
+    if g:leaderMapperDebug
+        echom "DEBUG: vim-leader-mapper - close window and delete buffer"
+    endif
 
-
-function! s:CloseVimMenu()
-    " TODO: populate for Vim8
 endfunction
 
 
@@ -177,6 +157,11 @@ function! s:WaitUserAction(leaderMenu)
     let userAction = nr2char(userAction)
     " Close menu window
     call s:CloseMenu()
+
+    if g:leaderMapperDebug
+        echom "DEBUG: vim-leader-mapper - User choice: ".userAction
+    endif
+
     " Retrieve command and execute it
     call s:ExecCommand(a:leaderMenu, userAction)
 
@@ -307,9 +292,15 @@ function! s:ExecCommand(leaderMenu, cmd)
     let choice = get(a:leaderMenu, a:cmd)[0]
     " Check if is a dict, so a sub-menu
     if type(choice) == 4
+        if g:leaderMapperDebug
+            echom "DEBUG: vim-leader-mapper - enter sub-menu"
+        endif
         call s:LoadMenu(choice)
     " Else run the command
     else
+        if g:leaderMapperDebug
+            echom "DEBUG: vim-leader-mapper - execute ".choice
+        endif
         execute choice
     endif
 
