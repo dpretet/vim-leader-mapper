@@ -33,7 +33,7 @@ Installation                                             *leader-mapper-installa
 
 Use Vim-Plug or any other plugin manager to install it:
 
-    Plug 'damofthemoon/vim-leader-mapper'
+    Plug 'dpretet/vim-leader-mapper'
 
 
 Follows a configuration example, binding regular Vim commands and FZF calls:

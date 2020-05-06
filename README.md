@@ -22,7 +22,7 @@ Use [Vim-Plug](https://github.com/junegunn/vim-plug) or any other plugin
 manager to install it.
 
 ```vim
-Plug 'damofthemoon/vim-leader-mapper'
+Plug 'dpretet/vim-leader-mapper'
 ```
 
 ## Configuration

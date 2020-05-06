@@ -1,7 +1,7 @@
 "---------------------------------------------------------------
-" Plugin:      https://github.com/damofthemoon/vim-leader-mapper
+" Plugin:      https://github.com/dpretet/vim-leader-mapper
 " Description: A plugin to create a leader key menu
-" Maintainer:  Damien Pretet https://github.com/damofthemoon
+" Maintainer:  Damien Pretet https://github.com/dpretet
 "---------------------------------------------------------------
 
 if exists('loaded_leader_mapper_vim') || &cp
