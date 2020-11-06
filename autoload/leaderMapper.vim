@@ -30,7 +30,7 @@ function! leaderMapper#start(...)
     else
         echom "INFO: vim-leader-mapper - Only supports Neovim!"
     endif
-    
+
     " Initialize the strart & end variables to avoid bad behavior
     " of commands/functions on next call
     let g:leaderMapperLineStart = -1
@@ -95,7 +95,7 @@ function! s:OpenMenu()
     " Open floating windows to display our menu
     let s:win = nvim_open_win(s:menuBuffer, v:true, opts)
     " Set floating window highlighting
-    call setwinvar(s:win, '&winhl', 'Normal:Pmenu')
+    call setwinvar(s:win, '&winhl', 'Normal:Normal')
 
     setlocal colorcolumn=
     setlocal buftype=nofile
