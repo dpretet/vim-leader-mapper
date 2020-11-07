@@ -3,7 +3,7 @@ if exists("b:current_syntax")
 endif
 
 syntax case ignore
-syntax keyword leaderMapperKeyword select open close write read fzf load git buffer buffers search
+syntax keyword leaderMapperKeyword select open close write read fzf load git buffer buffers search tag terminal execute
 highlight link leaderMapperKeyword Keyword
 
 syn region LeaderMapperKeys start="\["hs=e+1 end="\]\s"he=s-1 contained
