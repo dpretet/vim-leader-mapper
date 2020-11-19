@@ -151,12 +151,30 @@ function! s:WaitUserAction(leaderMenu)
 
     " redraw to force display of menu (hidden by default with getchar call)
     redraw
-    " wait for a user character input. Return ASCII code
-    let userAction = getchar()
-    " Convert to string
-    let userAction = nr2char(userAction)
-    " Close menu window
-    call s:CloseMenu()
+    let userAction = ""
+    let notCommand = 1
+
+    while (notCommand)
+
+        " wait for a user character input. Return ASCII code
+        let userInput = getchar()
+        " Convert to string
+        let userInput = nr2char(userInput)
+        let userAction = userAction . userInput
+
+        " Break the loop if command recognized
+        if has_key(a:leaderMenu, userAction)
+            call s:CloseMenu()
+            let notCommand = 0
+        endif
+
+        " Give up if receive ctrl-c or escape
+        if userInput == "\<c-c>" || userInput == "\e"
+            call s:CloseMenu()
+            return
+        endif
+
+    endwhile
 
     if g:leaderMapperDebug
         echom "DEBUG: vim-leader-mapper - User choice: ".userAction
