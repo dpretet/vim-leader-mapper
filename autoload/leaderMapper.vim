@@ -210,12 +210,22 @@ function! s:CreateMenu(leaderMenu)
     let title = ""
     let strMenu = []
 
+    let max_key_len = 1
     " First add the different user configuration
+    for [key, val] in items(a:leaderMenu)
+        if key != "name"
+            if strlen(key) > max_key_len
+                let max_key_len = strlen(key)
+            endif
+        endif
+    endfor
+
+    " Then add the different user configuration
     for [key, val] in items(a:leaderMenu)
         if key != "name"
             " Extract description (ix 0 = cmd, ix 1 = description)
             " and add a space margin
-            let str = " [". key . "] " . val[1]
+            let str = repeat(" ", max_key_len - strlen(key)). key . " -> " . val[1]
             call add(strMenu, str)
         endif
     endfor
@@ -232,7 +242,7 @@ function! s:CreateMenu(leaderMenu)
 
     " If title doesn't exist, simply name it 'Menu'
     if empty(title)
-        let title = " Leader Key Menu:"
+        let title = " Leader Key Menu"
     endif
 
     " Append as first element the menu title and a blank on last line
@@ -300,11 +310,6 @@ endfunction
 
 " Execute command requested by user
 function! s:ExecCommand(leaderMenu, cmd)
-
-    " Check first the command exists in dict
-    if !has_key(a:leaderMenu, a:cmd)
-        return
-    endif
 
     " Extract command (ix 0 = cmd, ix 1 = description)
     let choice = get(a:leaderMenu, a:cmd)[0]
