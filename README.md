@@ -15,6 +15,9 @@ It's also inspired from
 [vim-leader-guide](https://github.com/hecal3/vim-leader-guide) but it's simpler
 and use floating window to display leader menu.
 
+[Vim-which-key](https://github.com/liuchengxu/vim-which-key) offers similar
+features.
+
 
 ## Installation
 

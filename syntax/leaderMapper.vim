@@ -3,8 +3,8 @@ if exists("b:current_syntax")
 endif
 
 syntax case ignore
-syntax keyword leaderMapperKeyword select open close write read fzf load git 
-                                   \ buffer buffers search tag terminal execute 
+syntax keyword leaderMapperKeyword select open close write read fzf load git
+                                   \ buffer buffers search tag terminal execute
                                    \ task item image link column table row status
                                    \ rows columns tag tags
 highlight link leaderMapperKeyword Keyword
