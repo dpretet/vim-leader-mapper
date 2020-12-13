@@ -104,6 +104,7 @@ function! s:OpenMenu()
     setlocal nonumber
     setlocal norelativenumber
     setlocal signcolumn=no
+    setlocal foldcolumn=0
 
 endfunction
 
