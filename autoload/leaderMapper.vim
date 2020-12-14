@@ -212,7 +212,7 @@ function! s:CreateMenu(leaderMenu)
     let strMenu = []
 
     let max_key_len = 1
-    " First add the different user configuration
+    " First grab the max length of the entries to align them with white spaces
     for [key, val] in items(a:leaderMenu)
         if key != "name"
             if strlen(key) > max_key_len
@@ -247,7 +247,7 @@ function! s:CreateMenu(leaderMenu)
     endif
 
     " Append as first element the menu title and a blank on last line
-    let finalMenu = [title, ""] + menuLayout + [""]
+    let finalMenu = [" ".title, ""] + menuLayout + [""]
     return finalMenu
 
 endfunction
