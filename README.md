@@ -18,6 +18,8 @@ and use floating window to display leader menu.
 [Vim-which-key](https://github.com/liuchengxu/vim-which-key) offers similar
 features.
 
+Please not this plug-in is for Neovim and is not compatible with Vim because
+relying on floating window API of Neovim.
 
 ## Installation
 
