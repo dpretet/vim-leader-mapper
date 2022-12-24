@@ -170,7 +170,7 @@ function! s:WaitUserAction(leaderMenu)
         endif
 
         " Give up if receive ctrl-c or escape
-        if userInput == "\<c-c>" || userInput == "\e"
+        if userInput == "\<c-c>" || userInput == "\e" || userInput == "\<space>"
             call s:CloseMenu()
             return
         endif
