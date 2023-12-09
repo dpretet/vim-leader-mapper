@@ -25,13 +25,9 @@ function! leaderMapper#start(...)
         let g:leaderMapperLineEnd = a:2
     endif
 
-    if has('nvim')
-        call s:LoadMenu(g:leaderMenu)
-    else
-        echom "INFO: vim-leader-mapper - Only supports Neovim!"
-    endif
+    call s:LoadMenu(g:leaderMenu)
 
-    " Initialize the strart & end variables to avoid bad behavior
+    " Initialize the start & end variables to avoid bad behavior
     " of commands/functions on next call
     let g:leaderMapperLineStart = -1
     let g:leaderMapperLineEnd = -1
@@ -41,7 +37,8 @@ endfunction
 
 
 " Load menu, meaning create the buffer, display the window
-" and populate the content with leaderMenu configuration
+" and populate the content with leaderMenu configuration. Then
+" wiat for the user  choice to operate
 function! s:LoadMenu(leaderMenu)
 
     " Create the string menu to fill the buffer to display
@@ -66,7 +63,7 @@ function! s:OpenMenu()
         echom "DEBUG: vim-leader-mapper - open window"
     endif
 
-    "From menu dimension compute the window size & placement
+    " From menu dimension compute the window size & placement
     let height = len(s:leaderMenu)
 
     " Handles the window position
@@ -83,28 +80,39 @@ function! s:OpenMenu()
     let width = len(s:leaderMenu[3]) - 3
     let col = (&columns - width) / 2
 
-    " Set the position, size, ... of the floating window.
-    let opts = {
-                \ 'relative': 'editor',
-                \ 'row': row,
-                \ 'col': col,
-                \ 'width': width,
-                \ 'height': height
-                \ }
+    if has("nvim")
 
-    " Open floating windows to display our menu
-    let s:win = nvim_open_win(s:menuBuffer, v:true, opts)
-    " Set floating window highlighting
-    call setwinvar(s:win, '&winhl', 'Normal:Normal')
+        " Set the position, size, ... of the floating window.
+        let opts = {
+                    \ 'relative': 'editor',
+                    \ 'row': row,
+                    \ 'col': col,
+                    \ 'width': width,
+                    \ 'height': height
+                    \ }
 
-    setlocal colorcolumn=
-    setlocal buftype=nofile
-    setlocal nobuflisted
-    setlocal bufhidden=hide
-    setlocal nonumber
-    setlocal norelativenumber
-    setlocal signcolumn=no
-    setlocal foldcolumn=0
+        " Open floating windows to display our menu
+        let s:win = nvim_open_win(s:menuBuffer, v:true, opts)
+        " Set floating window highlighting
+        call setwinvar(s:win, '&winhl', 'Normal:Normal')
+
+        setlocal colorcolumn=
+        setlocal buftype=nofile
+        setlocal nobuflisted
+        setlocal bufhidden=hide
+        setlocal nonumber
+        setlocal norelativenumber
+        setlocal signcolumn=no
+        setlocal foldcolumn=0
+
+    else
+        let opts = {
+                    \ 'border': [0,0,0,0],
+                    \ 'wrap': v:true,
+                    \ }
+        let s:win = popup_create(s:leaderMenu, opts)
+        call popup_setoptions(s:win, {'highlight': 'Normal'})
+    endif
 
 endfunction
 
@@ -136,7 +144,12 @@ function! s:CloseMenu()
     endif
 
     " Close window (force)
-    call nvim_win_close(s:win, 1)
+    if has("nvim")
+        call nvim_win_close(s:win, 1)
+    else
+        call popup_close(s:win)
+    endif
+
     " Free the window's handle
     unlet s:win
 
@@ -197,9 +210,12 @@ function! s:FillMenu(leaderMenu)
 
     " Convert the conf into a list of string and create/fill the buffer
     let s:leaderMenu = s:CreateMenu(a:leaderMenu)
-    let s:menuBuffer = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:menuBuffer, 0, 0, 0, s:leaderMenu)
-    call nvim_buf_set_option(s:menuBuffer, 'filetype', 'leaderMapper')
+
+    if has('nvim')
+        let s:menuBuffer = nvim_create_buf(v:false, v:true)
+        call nvim_buf_set_lines(s:menuBuffer, 0, 0, 0, s:leaderMenu)
+        call nvim_buf_set_option(s:menuBuffer, 'filetype', 'leaderMapper')
+    endif
 
 endfunction
 
