@@ -2,8 +2,8 @@
 
 ## Introduction
 
-Vim-Leader-Mapper is a Neovim plugin to create leader key mapping and a visual
-menu to display them.  It's basically a copy of Spacemacs interactive menu,
+Vim-Leader-Mapper is a plugin to create leader key mapping and a visual
+menu to display them. It's basically a copy of Spacemacs interactive menu,
 relying on leader key to toggle it.
 
 - Easy to use: the user can simply add his own commands with few setup and map
@@ -17,9 +17,6 @@ and use floating window to display leader menu.
 
 [Vim-which-key](https://github.com/liuchengxu/vim-which-key) offers similar
 features.
-
-Please note this plug-in is for Neovim and is not compatible with Vim because it
-relies on the floating window API of Neovim.ur fork, so you can send a pull
 
 ## Installation
 
